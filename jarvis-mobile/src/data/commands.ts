@@ -1,0 +1,68 @@
+import type { Command } from '../types'
+
+export const COMMANDS: Command[] = [
+  {
+    id: 'lights',
+    label: 'Lights',
+    description: 'Cycle ambient lighting in the lab',
+    icon: 'Lightbulb',
+    response: 'Adjusting ambient lighting to 62% with a 4200K cool bias. Hallway fixtures synchronized.',
+    category: 'home',
+  },
+  {
+    id: 'music',
+    label: 'Music',
+    description: 'Resume focus playlist on the workshop speakers',
+    icon: 'Music',
+    response: 'Resuming focus playlist "Midnight Protocol" at track 4. Crossfade set to 6 seconds.',
+    category: 'home',
+  },
+  {
+    id: 'weather',
+    label: 'Weather',
+    description: 'Surface current and 6-hour forecast',
+    icon: 'CloudSun',
+    response: 'Malibu: 19°C, light marine layer. Winds WSW 11 km/h. No precipitation expected for the next 6 hours.',
+    category: 'intel',
+  },
+  {
+    id: 'schedule',
+    label: 'Schedule',
+    description: 'Brief me on the next 12 hours',
+    icon: 'CalendarClock',
+    response: 'You have 3 meetings in the next 12 hours. Stand-up at 09:30, design review at 11:00, and a call with Pepper at 17:15.',
+    category: 'intel',
+  },
+  {
+    id: 'scan',
+    label: 'Scan',
+    description: 'Run a network perimeter sweep',
+    icon: 'Radar',
+    response: 'Perimeter sweep complete. 14 devices identified, all authorised. No anomalous traffic in the last 60 minutes.',
+    category: 'system',
+  },
+  {
+    id: 'lock',
+    label: 'Lockdown',
+    description: 'Engage security protocols',
+    icon: 'ShieldCheck',
+    response: 'Lockdown protocol engaged. Workshop sealed, biometric checkpoints armed, J.A.R.V.I.S. is now monitoring in high-alert mode.',
+    category: 'system',
+  },
+  {
+    id: 'diagnose',
+    label: 'Diagnose',
+    description: 'Run a self-diagnostic on all subsystems',
+    icon: 'Stethoscope',
+    response: 'Running diagnostics. All 7 subsystems nominal. Last maintenance window: 14 days ago. No issues found.',
+    category: 'system',
+  },
+  {
+    id: 'satellite',
+    label: 'Satellite',
+    description: 'Connect to overhead constellation',
+    icon: 'Satellite',
+    response: 'Linked to constellation 47°N. Bandwidth 182 Mbps, latency 612 ms. Uplink encryption: AES-256.',
+    category: 'intel',
+  },
+]

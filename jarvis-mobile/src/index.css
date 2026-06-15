@@ -1,0 +1,127 @@
+@import '@fontsource/orbitron/400.css';
+@import '@fontsource/orbitron/600.css';
+@import '@fontsource/orbitron/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+@import '@fontsource/jetbrains-mono/600.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html, body, #root {
+    height: 100%;
+    background: #02060B;
+    color: #D7F3FF;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none;
+  }
+  body {
+    background:
+      radial-gradient(80% 60% at 50% 0%, rgba(34,224,255,.08) 0%, rgba(34,224,255,0) 60%),
+      radial-gradient(60% 50% at 80% 100%, rgba(122,184,255,.06) 0%, rgba(122,184,255,0) 70%),
+      linear-gradient(180deg, #02060B 0%, #03090F 100%);
+  }
+  button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  input, textarea {
+    font-family: inherit;
+  }
+  ::-webkit-scrollbar { width: 0; height: 0; }
+}
+
+@layer components {
+  .hud-panel {
+    @apply relative rounded-md border border-neon-cyan/30 bg-void-800/40 backdrop-blur-md;
+    box-shadow:
+      0 0 18px rgba(34,224,255,.12),
+      inset 0 0 24px rgba(34,224,255,.04);
+  }
+  .hud-panel-amber {
+    @apply relative rounded-md border border-neon-amber/30 bg-void-800/40 backdrop-blur-md;
+    box-shadow:
+      0 0 18px rgba(255,179,71,.14),
+      inset 0 0 24px rgba(255,179,71,.05);
+  }
+  .hud-chip {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] tracking-[.18em] uppercase font-mono
+      text-neon-cyan/80 border border-neon-cyan/30 rounded-sm bg-neon-cyan/5;
+  }
+  .hud-label {
+    @apply text-[10px] tracking-[.22em] uppercase font-mono text-steel-400;
+  }
+  .hud-divider {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-neon-cyan/30 to-transparent;
+  }
+  .hud-bracket::before,
+  .hud-bracket::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: rgba(34,224,255,.7);
+    border-style: solid;
+    border-width: 0;
+  }
+  .hud-bracket::before {
+    top: -1px; left: -1px;
+    border-top-width: 1px; border-left-width: 1px;
+  }
+  .hud-bracket::after {
+    bottom: -1px; right: -1px;
+    border-bottom-width: 1px; border-right-width: 1px;
+  }
+  .hex-clip {
+    clip-path: polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%);
+  }
+  .text-glow {
+    text-shadow: 0 0 6px rgba(34,224,255,.55);
+  }
+  .text-glow-amber {
+    text-shadow: 0 0 6px rgba(255,179,71,.6);
+  }
+  .scanlines {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(34,224,255,0.04) 0px,
+      rgba(34,224,255,0.04) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+  }
+  .focus-ring:focus-visible {
+    @apply outline-none ring-2 ring-neon-cyan/70 ring-offset-2 ring-offset-void-900;
+  }
+  .glow-text {
+    background: linear-gradient(180deg, #D7F3FF 0%, #22E0FF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@layer utilities {
+  .safe-pt { padding-top: max(env(safe-area-inset-top), 0.5rem); }
+  .safe-pb { padding-bottom: max(env(safe-area-inset-bottom), 0.5rem); }
+  .no-tap { -webkit-tap-highlight-color: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
