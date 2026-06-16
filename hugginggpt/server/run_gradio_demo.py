@@ -56,7 +56,7 @@ def add_text(messages, message):
         if not audio_url.startswith("http"):
             audio_url = "public/" + audio_url
         ext = audio_url.split(".")[-1]
-        name = f"public/audios/{str(uuid.uuid4()[:4])}.{ext}"
+        name = f"public/audios/{str(uuid.uuid4())[:4]}.{ext}"
         response = requests.get(audio_url)
         with open(name, "wb") as f:
             f.write(response.content)
@@ -65,7 +65,7 @@ def add_text(messages, message):
         if not video_url.startswith("http"):
             video_url = "public/" + video_url
         ext = video_url.split(".")[-1]
-        name = f"public/audios/{str(uuid.uuid4()[:4])}.{ext}"
+        name = f"public/audios/{str(uuid.uuid4())[:4]}.{ext}"
         response = requests.get(video_url)
         with open(name, "wb") as f:
             f.write(response.content)
