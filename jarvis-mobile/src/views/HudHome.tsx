@@ -10,21 +10,30 @@ import { useUiStore } from '../stores/ui'
 import { useSystemStore } from '../stores/system'
 import { ChevronRight, Cpu, Zap, MessageSquare, Power } from 'lucide-react'
 import { generateReply } from '../data/replies'
+import { useTilt } from '../hooks/useTilt'
+import { useToastStore } from '../stores/toast'
+import { playSfx } from '../utils/sound'
+import { tapStrong } from '../utils/haptics'
 
 /**
  * HudHome — the default landing view. Features a large JarvisCore (tap to
  * greet), a rotating mission feed, a quick greeting, a compact telemetry
- * strip, and quick links to the other tabs.
+ * strip, and quick links to the other tabs. The core has a subtle 3D
+ * parallax tilt on touch/mouse.
  */
 export function HudHome() {
   const persona = useAssistantStore((s) => s.prefs.personaName)
   const setTab = useUiStore((s) => s.setTab)
+  const haptics = useAssistantStore((s) => s.prefs.haptics)
+  const messagesLen = useAssistantStore((s) => s.messages.length)
   const vitals = useSystemStore((s) => s.vitals)
   const modules = useSystemStore((s) => s.modules)
   const addMessage = useAssistantStore((s) => s.addMessage)
   const { stream } = useMockStream()
+  const pushToast = useToastStore((s) => s.push)
   const [now, setNow] = useState(() => new Date())
   const chatRef = useRef<HTMLDivElement | null>(null)
+  const { ref: coreRef, tilt } = useTilt<HTMLButtonElement>(6)
   const [pulse, setPulse] = useState(false)
 
   useEffect(() => {
@@ -36,10 +45,13 @@ export function HudHome() {
     if (pulse) return
     setPulse(true)
     setTimeout(() => setPulse(false), 600)
+    if (haptics) tapStrong()
+    playSfx('tap')
+    pushToast({ tone: 'info', title: 'STATUS REQUEST', body: 'Querying systems…', ttl: 1800 })
     const prompt = 'Jarvis, status report'
     addMessage({ role: 'user', content: prompt })
     const id = addMessage({ role: 'assistant', content: '', pending: true })
-    stream(id, generateReply(prompt), { cps: 42 })
+    stream(id, generateReply(prompt, { persona, historyTurns: messagesLen }), { cps: 42 })
   }
 
   const cpu = vitals.find((v) => v.key === 'cpu')?.value ?? 0
@@ -63,23 +75,25 @@ export function HudHome() {
         </div>
       </div>
 
-      <div className="relative mx-auto my-1">
-        {/* Decorative ambient glow */}
+      <div className="relative mx-auto my-1" style={{ perspective: 800 }}>
         <div
           className="absolute inset-0 -m-12 rounded-full blur-3xl opacity-60 pointer-events-none"
           style={{ background: 'radial-gradient(50% 50% at 50% 50%, rgba(34,224,255,.25) 0%, rgba(34,224,255,0) 70%)' }}
         />
         <button
+          ref={coreRef}
           type="button"
           onClick={handleCoreTap}
           aria-label="Request status"
           className={`relative focus-ring rounded-full transition-transform active:scale-[.98] ${pulse ? 'animate-shake' : ''}`}
+          style={{
+            transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
+            transformStyle: 'preserve-3d',
+          }}
         >
           <JarvisCore size={260} />
         </button>
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 hud-chip">
-          TAP CORE · GREET
-        </div>
+        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 hud-chip">TAP CORE · GREET</div>
       </div>
 
       <div className="px-4 mt-3">
@@ -94,21 +108,9 @@ export function HudHome() {
       </div>
 
       <div className="px-4 mt-2 grid grid-cols-3 gap-2">
-        <QuickLink
-          icon={<MessageSquare className="w-3.5 h-3.5" />}
-          label="CHAT"
-          onClick={() => setTab('chat')}
-        />
-        <QuickLink
-          icon={<Cpu className="w-3.5 h-3.5" />}
-          label="VITALS"
-          onClick={() => setTab('telemetry')}
-        />
-        <QuickLink
-          icon={<Zap className="w-3.5 h-3.5" />}
-          label="CMDS"
-          onClick={() => setTab('commands')}
-        />
+        <QuickLink icon={<MessageSquare className="w-3.5 h-3.5" />} label="CHAT" onClick={() => setTab('chat')} />
+        <QuickLink icon={<Cpu className="w-3.5 h-3.5" />} label="VITALS" onClick={() => setTab('telemetry')} />
+        <QuickLink icon={<Zap className="w-3.5 h-3.5" />} label="CMDS" onClick={() => setTab('commands')} />
       </div>
 
       <div className="mt-3 mx-4 hud-panel p-3 flex items-center justify-between">
@@ -116,9 +118,7 @@ export function HudHome() {
           <div className="hud-label flex items-center gap-1">
             <Power className="w-3 h-3" /> VOICE INTERFACE
           </div>
-          <div className="font-mono text-[11px] text-steel-200 mt-0.5">
-            Tap the orb to begin.
-          </div>
+          <div className="font-mono text-[11px] text-steel-200 mt-0.5">Tap the orb to begin.</div>
         </div>
         <VoiceOrb size={56} />
       </div>

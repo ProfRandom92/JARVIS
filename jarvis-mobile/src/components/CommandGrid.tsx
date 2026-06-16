@@ -1,14 +1,35 @@
 import { useState } from 'react'
-import * as Icons from 'lucide-react'
+import {
+  Lightbulb,
+  Music,
+  CloudSun,
+  CalendarClock,
+  Radar,
+  ShieldCheck,
+  Stethoscope,
+  Satellite,
+  Sparkles,
+  type LucideIcon,
+} from 'lucide-react'
 import { COMMANDS } from '../data/commands'
 import { useAssistantStore } from '../stores/assistant'
 import { useMockStream } from '../hooks/useMockStream'
 import type { Command } from '../types'
 import { HexPanel } from './HexPanel'
+import { useToastStore } from '../stores/toast'
+import { playSfx } from '../utils/sound'
+import { tapStrong } from '../utils/haptics'
 
-function iconFor(name: string) {
-  const map = Icons as unknown as Record<string, Icons.LucideIcon>
-  return map[name] ?? Icons.Sparkles
+const ICON_MAP: Record<string, LucideIcon> = {
+  Lightbulb,
+  Music,
+  CloudSun,
+  CalendarClock,
+  Radar,
+  ShieldCheck,
+  Stethoscope,
+  Satellite,
+  Sparkles,
 }
 
 interface CommandCardProps {
@@ -18,7 +39,7 @@ interface CommandCardProps {
 }
 
 function CommandCard({ cmd, onRun, busy }: CommandCardProps) {
-  const Icon = iconFor(cmd.icon)
+  const Icon = ICON_MAP[cmd.icon] ?? Sparkles
   return (
     <button
       type="button"
@@ -56,12 +77,21 @@ function CommandCard({ cmd, onRun, busy }: CommandCardProps) {
  */
 export function CommandGrid({ onClose }: { onClose?: () => void }) {
   const addMessage = useAssistantStore((s) => s.addMessage)
+  const haptics = useAssistantStore((s) => s.prefs.haptics)
   const { stream } = useMockStream()
   const [busyId, setBusyId] = useState<string | null>(null)
+  const pushToast = useToastStore((s) => s.push)
 
   const run = (cmd: Command) => {
     if (busyId) return
     setBusyId(cmd.id)
+    if (haptics) tapStrong()
+    playSfx('success')
+    pushToast({
+      tone: cmd.id === 'lock' || cmd.id === 'alert' ? 'alert' : 'success',
+      title: `${cmd.label.toUpperCase()} EXECUTED`,
+      body: cmd.description,
+    })
     addMessage({ role: 'system', content: `> EXECUTING ${cmd.label.toUpperCase()}` })
     const id = addMessage({ role: 'assistant', content: '', pending: true, command: cmd.label })
     stream(id, cmd.response, { cps: 32, prefix: '' })
