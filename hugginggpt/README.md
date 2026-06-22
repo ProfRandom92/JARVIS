@@ -104,6 +104,17 @@ python models_server.py --config configs/config.default.yaml # required when `in
 python awesome_chat.py --config configs/config.default.yaml --mode server # for text-davinci-003
 ```
 
+### Docker Deployment
+
+A Dockerfile is provided to run the server in a container using the lightweight configuration. Build the image and run it with your API keys:
+
+```bash
+cd server
+docker build -t jarvis-server .
+docker run -e OPENAI_API_KEY=$OPENAI_API_KEY -e HUGGINGFACE_ACCESS_TOKEN=$HUGGINGFACE_ACCESS_TOKEN -p 8004:8004 jarvis-server
+```
+
+
 Now you can access Jarvis' services by the Web API. 
 
 + `/hugginggpt` --method `POST`, access the full service.

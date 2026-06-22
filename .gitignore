@@ -23,6 +23,7 @@ server/public/examples/*
 # docker
 Dockerfile
 docker-compose.yml
+!hugginggpt/server/Dockerfile
 
 # for gradio
 # server/run_gradio.py
